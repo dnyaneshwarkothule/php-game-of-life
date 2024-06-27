@@ -27,11 +27,16 @@ final class RunGameCommand extends Command
         $outputFile = $input->getOption('output');
         assert(is_string($outputFile));
 
-        $game = new Game();
-        $game->run($inputFile, $outputFile);
+        $inputFileObject = new XmlFileReader($inputFile);
+        $outputFileObject = new XmlFileWriter($outputFile);
 
-        $output->writeln('File ' . $outputFile . ' was saved.');
-
+        $game = new Game($inputFileObject, $outputFileObject);
+        try{
+            $game->run($inputFile, $outputFile);
+            $output->writeln('File ' . $outputFile . ' was saved.');
+        } catch( \Exception $e ){
+            $output->writeln(' -------------- ' . $e->getMessage() . ' -------------- ');
+        }
         return 0;
     }
 }
