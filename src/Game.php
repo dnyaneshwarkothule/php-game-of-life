@@ -2,7 +2,7 @@
 
 namespace Life;
 
-class Game implements GameInterface
+class Game
 {
     /** @var int */
     private $iterationsCount;
@@ -20,25 +20,12 @@ class Game implements GameInterface
      */
     private $cells;
 
-    /**
-     * @var XmlFileReader
-     */
-    private $input;
-
-    /**
-     * @var XmlFileWriter
-     */
-    private $output;
-
-    public function __construct( XmlFileReader $input, XmlFileWriter $output )
-    {
-        $this->input = $input;
-        $this->output = $output;
-    }
-
     public function run(string $inputFile, string $outputFile): void
     {
-        [$size, $species, $cells, $iterationsCount] = $this->input->loadFile();
+        $input = new XmlFileReader($inputFile);
+        $output = new XmlFileWriter($outputFile);
+
+        [$size, $species, $cells, $iterationsCount] = $input->loadFile();
 
         $this->size = $size;
         $this->species = $species;
@@ -56,7 +43,7 @@ class Game implements GameInterface
             $this->cells = $newCells;
         }
 
-        $this->output->saveWorld($this->size, $this->species, $this->cells);
+        $output->saveWorld($this->size, $this->species, $this->cells);
     }
 
     private function evolveCell(int $x, int $y): ?int
